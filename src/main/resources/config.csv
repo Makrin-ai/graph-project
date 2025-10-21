@@ -1,0 +1,2 @@
+package_name,repository_url,test_mode
+org.springframework.boot:spring-boot-starter-web,https://repo1.maven.org/maven2/,false

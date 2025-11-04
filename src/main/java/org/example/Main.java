@@ -20,7 +20,7 @@ public class Main {
         System.out.print("Введите путь к CSV-файлу конфигурации (src/main/resources/config.csv): ");
         String filePath = scanner.nextLine().trim(); //читаем ввод (строка) и trim() убирает пробелы по краям
 
-        Map<String, String> config;
+        Map<String, String> config; //создаем переменную с именем config, которая будет хранить коллекцию типа Map с ключами-строками и значениями-строками"
         try {
             config = readConfig(filePath);
             System.out.println("Конфигурация успешно загружена.\n");
@@ -35,7 +35,7 @@ public class Main {
 
         System.out.println("\n=== Этап 2: Сбор данных о зависимостях ===");
         System.out.print("Введите команду для получения зависимостей (dependencies): ");
-        String command = scanner.nextLine().trim().toLowerCase();
+        String command = scanner.nextLine().trim();
         //toLowerCase() — переводит всю строку в нижний регистр, чтобы не зависеть от регистра
         // (Dependencies, DEPENDENCIES, dependencies — всё засчитается одинаково)
 
@@ -55,8 +55,6 @@ public class Main {
             }
             //разбор имени пакета
             String[] parts = packageName.split(":");
-            //if packageName = "org.springframework:spring-core"= parts[0] = "org.springframework" -> groupId = "org/springframework"
-            //parts[1] = "spring-core" -> artifactId = "spring-core"
             if (parts.length != 2) {
                 //Проверка if (parts.length != 2) нужна, чтобы убедиться, что строка действительно содержит ровно один :
                 System.out.println("Неверный формат package_name. Ожидалось groupId:artifactId");
@@ -65,6 +63,8 @@ public class Main {
             String groupId = parts[0].replace('.', '/');
             //В Maven пути в репозитории строятся по иерархии папок, где точки в groupId заменяются на слэши
             String artifactId = parts[1];
+            //if packageName = "org.springframework:spring-core"= parts[0] = "org.springframework" -> groupId = "org/springframework"
+            //parts[1] = "spring-core" -> artifactId = "spring-core"
 
 
             //получение инфы о последней версии

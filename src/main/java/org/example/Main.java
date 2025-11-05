@@ -34,16 +34,16 @@ public class Main {
         }
 
         System.out.println("\n=== Этап 2: Сбор данных о зависимостях ===");
-        System.out.print("Введите команду для получения зависимостей (dependencies): ");
-        String command = scanner.nextLine().trim();
-        //toLowerCase() — переводит всю строку в нижний регистр, чтобы не зависеть от регистра
-        // (Dependencies, DEPENDENCIES, dependencies — всё засчитается одинаково)
-
-        if (!command.equals("dependencies")) {
-            //если введённая команда не равна слову "dependencies"
-            System.out.println("Неизвестная команда. Программа завершена.");
-            return;
-        }
+//        System.out.print("Введите команду для получения зависимостей (dependencies): ");
+//        String command = scanner.nextLine().trim();
+//        //toLowerCase() — переводит всю строку в нижний регистр, чтобы не зависеть от регистра
+//        // (Dependencies, DEPENDENCIES, dependencies — всё засчитается одинаково)
+//
+//        if (!command.equals("dependencies")) {
+//            //если введённая команда не равна слову "dependencies"
+//            System.out.println("Неизвестная команда. Программа завершена.");
+//            return;
+//        }
         try {
             String packageName = config.get("package_name");
             String repoUrl = config.get("repository_url");

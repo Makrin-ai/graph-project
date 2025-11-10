@@ -1,16 +1,15 @@
 package org.example;
 
 import java.io.BufferedReader;//класс для чтения файлов/потоков
-import java.io.FileInputStream; //класс для чтения файлов/потоков
-import java.io.InputStream;//класс для чтения файлов/потоков
-import java.io.InputStreamReader; //класс для чтения файлов/потоков
+import java.io.FileInputStream; //Для чтения байтов
+import java.io.InputStream;//Базовый класс для потоков ввода
+import java.io.InputStreamReader; //преобразует байты в символы
 import java.net.URL;//чтобы открыть URL и скачать содержимое
-import java.util.HashMap;//ключ → значение
-import java.util.Map;
-import java.util.Scanner;
-import java.util.regex.Matcher; //регулярные выражения
-import java.util.regex.Pattern; //регулярные выражения
-
+import java.util.HashMap;//хранение конфигурации(кдюч-значение)
+import java.util.Map;//Интерфейс для работы с коллекциями
+import java.util.Scanner;//Чтение пользовательского ввода
+import java.util.regex.Matcher; //Поиск совпадений в тексте
+import java.util.regex.Pattern; //Компиляция регулярных выражений
 public class Main {
 
     public static void main(String[] args) {
@@ -20,11 +19,13 @@ public class Main {
         System.out.print("Введите путь к CSV-файлу конфигурации (src/main/resources/config.csv): ");
         String filePath = scanner.nextLine().trim(); //читаем ввод (строка) и trim() убирает пробелы по краям
 
+
         Map<String, String> config; //создаем переменную с именем config, которая будет хранить коллекцию типа Map с ключами-строками и значениями-строками"
         try {
             config = readConfig(filePath);
             System.out.println("Конфигурация успешно загружена.\n");
             System.out.println("Параметры:");
+            //вывод параметров файла конфиг
             for (String key : config.keySet()) {
                 System.out.println(" " + key + ": " + config.get(key));
             }
@@ -34,16 +35,7 @@ public class Main {
         }
 
         System.out.println("\n=== Этап 2: Сбор данных о зависимостях ===");
-//        System.out.print("Введите команду для получения зависимостей (dependencies): ");
-//        String command = scanner.nextLine().trim();
-//        //toLowerCase() — переводит всю строку в нижний регистр, чтобы не зависеть от регистра
-//        // (Dependencies, DEPENDENCIES, dependencies — всё засчитается одинаково)
-//
-//        if (!command.equals("dependencies")) {
-//            //если введённая команда не равна слову "dependencies"
-//            System.out.println("Неизвестная команда. Программа завершена.");
-//            return;
-//        }
+//     
         try {
             String packageName = config.get("package_name");
             String repoUrl = config.get("repository_url");
@@ -53,13 +45,15 @@ public class Main {
                 System.out.println("Ошибка: отсутствует package_name или repository_url в конфигурации.");
                 return;
             }
-            //разбор имени пакета
+            //парсинг имени пакета(анализ зависимостей)
             String[] parts = packageName.split(":");
             if (parts.length != 2) {
                 //Проверка if (parts.length != 2) нужна, чтобы убедиться, что строка действительно содержит ровно один :
+                //Валидация формата (ровно 2 части)
                 System.out.println("Неверный формат package_name. Ожидалось groupId:artifactId");
                 return;
             }
+            //Преобразование groupId в путь (точки → слэши) для формирования URL
             String groupId = parts[0].replace('.', '/');
             //В Maven пути в репозитории строятся по иерархии папок, где точки в groupId заменяются на слэши
             String artifactId = parts[1];
@@ -72,6 +66,8 @@ public class Main {
             //Формирует ссылку, по которой хранится XML-файл с информацией о версиях пакета.
             System.out.println("Получение информации о последней версии из:\n" + metadataUrl);
 
+
+            //работа с Maven
             String metadata = readUrl(metadataUrl); //скачивает содержимое файла с Maven-репозитория т.е. XML как текст
             Pattern versionPattern = Pattern.compile("<latest>(.*?)</latest>"); //создаёт регулярное выражение, чтобы найти в XML строку между тегами <latest> и </latest>
             Matcher matcher = versionPattern.matcher(metadata);
@@ -79,7 +75,6 @@ public class Main {
             //Формируем URL: репозиторий/org/springframework/spring-core/maven-metadata.xml
             //Скачиваем XML-файл
             //Ищем тег <latest>5.3.20</latest> и извлекаем версию "5.3.20"
-            //matcher.find() ищет совпадение
             //matcher.group(1) возвращает найденную подстроку (первая группа в скобках (.*?))
 
             if (latestVersion == null) {
